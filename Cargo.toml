@@ -9,7 +9,7 @@ repository = "https://github.com/muxover/json-sync"
 documentation = "https://docs.rs/json-sync"
 readme = "README.md"
 keywords = ["json", "sync", "persistence", "map", "shardmap"]
-categories = ["concurrency", "data-structures", "serialization"]
+categories = ["concurrency", "data-structures"]
 
 [lib]
 name = "json_sync"
