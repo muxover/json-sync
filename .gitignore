@@ -1,0 +1,33 @@
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+/doc/
+
+# Benchmarks
+target/criterion/
+
+# Backup files
+*.orig
+*.bak
+*.tmp
+
+# Test files
+test_*.json
+*_example.json
+*_test.json
+bench_*.json
+
