@@ -30,6 +30,11 @@ where
 
     /// Produce a snapshot of all entries. Consistent view; may clone values.
     fn iter_snapshot(&self) -> Box<dyn Iterator<Item = (K, V)> + Send + '_>;
+
+    /// Number of entries. Used to pre-allocate buffers; default 0.
+    fn map_len(&self) -> usize {
+        0
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -59,6 +64,8 @@ where
                 .map(|(k, arc_v)| (k, (*arc_v).clone())),
         )
     }
+
+    // map_len() uses default 0
 }
 
 // ----------------------------------------------------------------------------
@@ -83,12 +90,17 @@ where
     }
 
     fn iter_snapshot(&self) -> Box<dyn Iterator<Item = (K, V)> + Send + '_> {
-        let snap: Vec<(K, V)> = self
-            .read()
-            .iter()
-            .map(|(k, v)| (k.clone(), v.clone()))
-            .collect();
+        let guard = self.read();
+        let len = guard.len();
+        let mut snap = Vec::with_capacity(len);
+        for (k, v) in guard.iter() {
+            snap.push((k.clone(), v.clone()));
+        }
         Box::new(snap.into_iter())
+    }
+
+    fn map_len(&self) -> usize {
+        self.read().len()
     }
 }
 
@@ -116,10 +128,15 @@ where
     }
 
     fn iter_snapshot(&self) -> Box<dyn Iterator<Item = (K, V)> + Send + '_> {
-        let snap: Vec<(K, V)> = self
-            .iter()
-            .map(|r| (r.key().clone(), r.value().clone()))
-            .collect();
+        let len = self.len();
+        let mut snap = Vec::with_capacity(len);
+        for r in self.iter() {
+            snap.push((r.key().clone(), r.value().clone()));
+        }
         Box::new(snap.into_iter())
+    }
+
+    fn map_len(&self) -> usize {
+        self.len()
     }
 }

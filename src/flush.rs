@@ -5,7 +5,7 @@
 //!
 //! **Async worker** — Exits gracefully on drop: stop flag is set and the sender is dropped so the
 //! receiver sees disconnection; then the worker thread is joined. No dangling threads. Dropping
-//! a handle that uses `Async` may block briefly while the worker flushes and exits.
+//! a handle that uses `Async` may block up to one flush interval while the worker exits.
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;

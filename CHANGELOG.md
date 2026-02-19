@@ -8,5 +8,6 @@
 - **open / open_with_policy** — Load or create; returns JsonSyncHandle (derefs to store).
 - **insert, get, remove, flush, iter, path** — Unified Error type for all fallible operations.
 - **Atomic writes** — Temp file then rename for crash safety.
+- **Optimizations** — Pre-allocated flush/snapshot buffers; lighter async worker (fewer allocations).
 
 See [release-notes/v0.1.0.md](release-notes/v0.1.0.md) for more detail.

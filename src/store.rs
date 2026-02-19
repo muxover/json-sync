@@ -72,21 +72,14 @@ where
         let (worker, trigger) = match &policy {
             FlushPolicy::Async(interval) => {
                 let (tx, rx) = std::sync::mpsc::sync_channel(0);
-                let sync_for_worker: JsonSync<K, V, M> = JsonSync {
-                    map: Arc::clone(&map),
-                    path: path.clone(),
-                    serializer: JsonSerializer::new(),
-                    policy: policy.clone(),
-                    trigger: None,
-                    _marker: PhantomData,
-                };
-                let arc = Arc::new(sync_for_worker);
-                let inner = Arc::clone(&arc);
+                let map_worker = Arc::clone(&map);
+                let path_worker = path.clone();
+                let serializer_worker = serializer.clone();
                 let interval = *interval;
                 let w = AsyncFlushWorker::start_with_receiver(
                     interval,
                     move || {
-                        let _ = inner.flush();
+                        let _ = do_flush(map_worker.as_ref(), &path_worker, &serializer_worker);
                     },
                     rx,
                 );
@@ -169,13 +162,17 @@ where
     V: Send + Sync + Clone + Serialize + DeserializeOwned,
     M: MapBackend<K, V>,
 {
-    let data: HashMap<K, V> = map.iter_snapshot().collect();
+    let cap = map.map_len();
+    let mut data = HashMap::with_capacity(cap);
+    for (k, v) in map.iter_snapshot() {
+        data.insert(k, v);
+    }
     let bytes = serializer.serialize(&data)?;
     atomic_write(path, &bytes)
 }
 
 /// Handle that owns the store and (when using `Async` policy) the background flush worker.
-/// Derefs to `JsonSync`. Dropping may block briefly while the worker exits.
+/// Derefs to `JsonSync`. Dropping may block up to one flush interval while the worker exits.
 /// To share across threads, wrap in `Arc`: `Arc::new(handle)` or clone an `Arc<JsonSyncHandle<...>>`.
 /// Field order: inner dropped first so that the trigger sender is dropped and the worker thread sees Disconnected before we join.
 pub struct JsonSyncHandle<K, V, M> {

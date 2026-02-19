@@ -90,7 +90,7 @@ fn main() -> Result<(), json_sync::Error> {
 | Policy            | Description |
 |-------------------|-------------|
 | `FlushPolicy::Immediate` | Flush after every insert/remove. |
-| `FlushPolicy::Async(d)`  | Background thread flushes every `d` and on mutation; dropping the handle joins the thread. |
+| `FlushPolicy::Async(d)`  | Background thread flushes every `d` and on mutation; dropping the handle joins the thread (may block up to one interval). |
 | `FlushPolicy::Manual`   | Flush only when you call `flush()`. |
 
 ## ⚙️ Configuration
@@ -171,7 +171,7 @@ With ShardMap (and any backend that stores `Arc<V>`), `get` and `iter()` clone o
 
 - **Storage** — The map backend (e.g. ShardMap) lives inside the store; all reads/writes go through it. No global lock beyond the backend’s own locking.
 - **Persistence** — Full snapshot to JSON; write to `path.tmp` then `fs::rename` to `path` for crash safety.
-- **Async worker** — For `FlushPolicy::Async`, a background thread runs on an interval and on trigger; dropping the handle drops the trigger sender then joins the thread (graceful shutdown, no dangling threads).
+- **Async worker** — For `FlushPolicy::Async`, a background thread runs on an interval and on trigger; dropping the handle drops the trigger sender then joins the thread (graceful shutdown; may block up to one flush interval).
 
 ## 🚫 Non-goals
 
