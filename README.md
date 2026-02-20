@@ -8,7 +8,7 @@
 
 **Persistent JSON-backed key-value store with pluggable map backends.**
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](https://docs.rs/json-sync) • [Configuration](#️-configuration) • [API Overview](#-api-overview) • [Backends](#-backends) • [Non-goals](#-non-goals) • [License](#-license)
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](https://docs.rs/json-sync) • [Configuration](#️-configuration) • [API Overview](#-api-overview) • [Backends](#-backends) • [Non-goals](#-non-goals) • [Contributing](#-contributing) • [License](#-license)
 
 </div>
 
@@ -181,6 +181,10 @@ json-sync is focused. The following are explicitly **not** goals:
 - **Network sync** — No built-in replication; use with other crates if needed.
 - **Alternative formats** — Default is JSON only; custom serializers are a possible future extension.
 - **WAL or compaction** — Atomic write is always on; optional compaction may be added later.
+
+## 🤝 Contributing
+
+Contributions are welcome. Please open an [issue](https://github.com/muxover/json-sync/issues) or [pull request](https://github.com/muxover/json-sync) on GitHub.
 
 ## 📄 License
 

@@ -13,6 +13,12 @@
 //! - **Atomic writes** — Persistence uses write-to-temp-then-rename for crash safety.
 //! - **Unified errors** — `insert`, `remove`, and `flush` all return `Result<_, Error>` (IO, serialize, deserialize, config).
 //!
+//! ## When to use json-sync
+//!
+//! - You need a **simple persistent key-value store** backed by a JSON file.
+//! - You want **concurrent access** with a choice of map (ShardMap, DashMap, or `RwLock<HashMap>`).
+//! - You want **configurable flush** — immediate, batched async, or manual.
+//!
 //! ## Snapshot cloning
 //!
 //! With backends that store `Arc<V>` (e.g. ShardMap), `get` and `iter()` clone out of the Arc.
@@ -41,6 +47,15 @@
 //! |-----------|---------|-------------|
 //! | (none)    | ✓       | ShardMap + RwLock\<HashMap\> backends, serde_json. |
 //! | `dashmap` | —       | Implement `MapBackend` for `DashMap<K, V>`. |
+//!
+//! ## Configuration
+//!
+//! Use [`open`](JsonSync::open) for default (manual) flush, or [`open_with_policy`](JsonSync::open_with_policy)
+//! with [`FlushPolicy::Immediate`] or [`FlushPolicy::Async`](FlushPolicy::Async) for different persistence behavior.
+//!
+//! ## Non-goals
+//!
+//! No transactions, queries, or secondary indexes; no built-in replication; JSON only (no other formats by default).
 
 #![deny(missing_docs)]
 #![warn(clippy::all)]
