@@ -1,0 +1,36 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.cursor/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Release notes are tracked; build artifacts are not
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test / example output files (json-sync writes temp JSON)
+test_*.json
+*_example.json
+*_test.json
+bench_*.json
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+credentials.*
